@@ -45,7 +45,7 @@ public class StartSeedingCommandHandler : IRequestHandler<StartSeedingCommand, R
             sw.Stop();
 
             if (totalProcessed == 0)
-                return Result<string>.Success($"Все записи о клиентах уже были перенесены в БД! Время выполнение операции {sw.ElapsedMilliseconds}ms");
+                return Result<string>.Success($"Все записи о клиентах уже были перенесены в БД! Время перепроверки составило {sw.ElapsedMilliseconds}ms");
 
             return Result<string>.Success($"Записи о клиентах в количестве {totalProcessed} успешно обработаны и сохранены в БД. Время выполнение операции {sw.ElapsedMilliseconds}ms");
         }
