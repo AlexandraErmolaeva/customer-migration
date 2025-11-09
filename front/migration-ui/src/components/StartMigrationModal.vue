@@ -26,6 +26,7 @@
 import { customerService } from '../services/customerService'
 
 export default {
+  name: 'StartMigrationModal',
   props: {
     visible: Boolean,
   },
@@ -56,10 +57,12 @@ export default {
     cancel() {
       this.$emit('close')
       this.$router.push('/customers')
+      this.resultMessage = ''
     },
     closeModal() {
       this.$emit('close')
       this.$router.push('/customers')
+      this.resultMessage = ''
     },
   },
 }
@@ -131,7 +134,7 @@ export default {
 
 .btn-ok,
 .btn-yes {
-  background: linear-gradient(13deg, #c14fff, #79d5ec);
+  background: linear-gradient(13deg, #bc75e2, #79d5ec);
   color: #333333;
 }
 
@@ -142,7 +145,7 @@ export default {
 }
 
 .btn-no {
-  background: linear-gradient(13deg, #79d5ec, #c14fff);
+  background: linear-gradient(13deg, #bc75e2, #79d5ec);
   color: #333333;
 }
 

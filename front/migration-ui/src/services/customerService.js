@@ -1,13 +1,13 @@
-import axios from 'axios'
+import axiosInstance from './axiosInstance'
 
 export const customerService = {
-  startSeeding() {
-    return axios.post('/api/Seeding/Start', {})
-  },
   getCustomers(params) {
-    return axios.get('/api/Customer/Get/All', { params })
+    return axiosInstance.get('/Customer/Get/All', { params })
   },
   updateCustomer(customer) {
-    return axios.post('/api/Customer/Update', customer)
+    return axiosInstance.post('/Customer/Update', customer)
+  },
+  startSeeding() {
+    return axiosInstance.post('/Seeding/Start')
   },
 }

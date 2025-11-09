@@ -9,8 +9,16 @@
                 <v-card-title class="card-title"> Список клиентов </v-card-title>
               </v-col>
               <v-col cols="3" class="d-flex justify-end align-center">
+                <button
+                  @click="showMigrationModal = true"
+                  :disabled="loading"
+                  class="customer-page-button me-3"
+                >
+                  Повторить миграцию
+                </button>
+
                 <button @click="onClickRefresh" :disabled="loading" class="customer-page-button">
-                  {{ loading ? 'Загрузка...' : 'Обновить' }}
+                  {{ loading ? 'Загрузка...' : 'Обновить таблицу' }}
                 </button>
               </v-col>
             </v-row>
@@ -19,6 +27,11 @@
               ref="customersTable"
               :page-size="pageSize"
               @loading-changed="onLoadingChanged"
+            />
+
+            <StartMigrationModal
+              :visible="showMigrationModal"
+              @close="showMigrationModal = false"
             />
           </v-card-text>
         </v-card>
@@ -29,14 +42,16 @@
 
 <script>
 import CustomersTable from '../components/CustomersTable.vue'
+import StartMigrationModal from '../components/StartMigrationModal.vue'
 
 export default {
   name: 'CustomersPage',
-  components: { CustomersTable },
+  components: { CustomersTable, StartMigrationModal },
   data() {
     return {
       loading: false,
       pageSize: 10,
+      showMigrationModal: false,
     }
   },
   methods: {
@@ -81,5 +96,12 @@ export default {
 
 .transparent-card {
   background: linear-gradient(13deg, #d8f7ff, #e2c8ff);
+  border-radius: 30px;
+  overflow: hidden;
+  box-shadow: 0 0px 20px rgba(102, 242, 252, 0.4);
+}
+
+.customer-page-button + .customer-page-button {
+  margin-left: 30px;
 }
 </style>

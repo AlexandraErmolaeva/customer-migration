@@ -5,9 +5,10 @@
 </template>
 
 <script>
-import StartSeedingModal from '../components/StartSeedingModal.vue'
+import StartSeedingModal from '../components/StartMigrationModal.vue'
 
 export default {
+  name: 'HomePage',
   components: { StartSeedingModal },
   data() {
     return {

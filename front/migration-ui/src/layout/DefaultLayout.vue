@@ -1,10 +1,10 @@
 <template>
   <div class="layout">
-    <header class="layout-header">Мой проект</header>
+    <header class="layout-header">Проект миграции данных клиентов</header>
     <main class="layout-content">
       <router-view />
     </main>
-    <footer class="layout-footer">© 2025 Мой проект</footer>
+    <footer class="layout-footer">© 2025 RobotX</footer>
   </div>
 </template>
 
