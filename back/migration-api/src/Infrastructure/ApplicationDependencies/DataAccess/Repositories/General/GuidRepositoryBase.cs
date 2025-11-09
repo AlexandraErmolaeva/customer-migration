@@ -1,0 +1,59 @@
+﻿using Application.Common.Mappings;
+using Application.Dependencies.DataAccess.Repositories.General;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Domain.Entities.General;
+using Infrastructure.Persistence.Context;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
+
+namespace Infrastructure.ApplicationDependencies.DataAccess.Repositories.General;
+
+internal abstract class GuidRepositoryBase<TEntity> : IGuidRepository<TEntity> where TEntity : EntityBase
+{
+    protected readonly CustomersDbContext _context;
+    protected readonly DbSet<TEntity> _set;
+    protected readonly IMapper _mapper;
+
+    protected abstract IQueryable<TEntity> BaseQuery { get; }
+
+    protected GuidRepositoryBase(CustomersDbContext context, IMapper mapper)
+    {
+        _context = context;
+        _set = context.Set<TEntity>();
+        _mapper = mapper;
+    }
+
+    public virtual void Add(TEntity entity)
+        => _set.Add(entity);
+
+    public virtual void AddRange(IEnumerable<TEntity> entities)
+        => _set.AddRange(entities);
+
+    public virtual async Task<TEntity> GetById(Guid id, bool readOnly = false)
+        => await (readOnly ? BaseQuery.AsNoTracking() : BaseQuery).FirstOrDefaultAsync(e => e.Id == id);
+
+    public virtual async Task<IEnumerable<TEntity>> GetFilteredList(Expression<Func<TEntity, bool>> filter, bool readOnly = false)
+       => await (readOnly ? BaseQuery.AsNoTracking() : BaseQuery).Where(filter).ToListAsync();
+
+    public virtual async Task<TEntity> GetFilteredWithIncludes(Expression<Func<TEntity, bool>> filter, bool readOnly = false, params Expression<Func<TEntity, object>>[] includes)
+    {
+        var query = readOnly ? BaseQuery.AsNoTracking() : BaseQuery;
+
+        if (includes is not null && includes.Any())
+        {
+            foreach (var include in includes)
+                query = query.Include(include);
+        }
+        return await query.FirstOrDefaultAsync(filter);
+    }
+
+    public virtual async Task<List<TDto>> GetProjectedListAsync<TDto>(Expression<Func<TEntity, bool>> filter = null) where TDto : IMapFrom<TEntity>
+    {
+        var query = BaseQuery;
+        if (filter is not null)
+            query = query.Where(filter);
+
+        return await query.ProjectTo<TDto>(_mapper.ConfigurationProvider).ToListAsync();
+    }
+}

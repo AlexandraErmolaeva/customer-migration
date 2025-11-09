@@ -1,0 +1,19 @@
+version: '3.9'
+
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    container_name: customers-db-mssql
+    environment:
+      SA_PASSWORD: "YourStrong!Passw0rd"
+      ACCEPT_EULA: "Y"
+      TZ: "Russian Standard Time"
+    ports:
+      - "1454:1433"
+    volumes:
+      - mssql-data:/var/opt/mssql
+      - /usr/share/zoneinfo/Europe/Moscow:/etc/localtime:ro
+    restart: unless-stopped
+
+volumes:
+  mssql-data:
