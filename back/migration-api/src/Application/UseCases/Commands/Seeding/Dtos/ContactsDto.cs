@@ -6,6 +6,7 @@ namespace Application.UseCases.Commands.Seeding.Dtos;
 
 public class ContactsDto : IMapFrom<ContactsEntity>
 {
+    public Guid Id { get; set; }
     public string? PhoneMobile { get; set; }
     public string? Email { get; set; }
 
