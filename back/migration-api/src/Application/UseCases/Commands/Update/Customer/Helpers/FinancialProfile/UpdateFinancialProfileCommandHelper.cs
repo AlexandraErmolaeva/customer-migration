@@ -4,5 +4,4 @@ namespace Application.UseCases.Commands.Update.Customer.Helpers.FinancialProfile
 
 public record UpdateFinancialProfileCommandHelper : UpdateFinancialProfileCommandBase
 {
-    public Guid Id { get; set; }
 }

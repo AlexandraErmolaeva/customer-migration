@@ -14,7 +14,7 @@ public class ContactsEntity : EntityBase
 
     public ContactsEntity Update(UpdateContactsDto dto)
     {
-        LastModifiedAt = DateTime.Now;
+        LastModifiedAt = DateTime.UtcNow;
         PhoneMobile = dto.PhoneMobile;
         Email = dto.Email;
 

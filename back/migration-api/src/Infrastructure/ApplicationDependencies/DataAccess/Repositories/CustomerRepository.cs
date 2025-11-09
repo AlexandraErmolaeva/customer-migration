@@ -32,7 +32,7 @@ internal sealed class CustomerRepository : GuidRepositoryBase<CustomerEntity>, I
         var count = await query.CountAsync();
         query = query
             .Skip((page - 1) * take)
-            .Take(page);
+            .Take(take);
         var customers =  await query.ProjectTo<TDto>(_mapper.ConfigurationProvider).ToListAsync();
         return (customers, count);
     }

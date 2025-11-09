@@ -2,7 +2,7 @@
 
 public abstract record UpdateFinancialProfileCommandBase
 {
-    public string? Pincode { get; private set; }
-    public decimal Bonus { get; private set; }
-    public decimal Turnover { get; private set; }
+    public string? Pincode { get; set; }
+    public decimal Bonus { get; set; }
+    public decimal Turnover { get; set; }
 }

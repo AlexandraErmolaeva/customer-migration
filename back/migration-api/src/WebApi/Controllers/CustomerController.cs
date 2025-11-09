@@ -19,7 +19,7 @@ public class CustomerController : ControllerBase
     }
 
     [HttpGet("Get/All")]
-    public async Task<ActionResult<PaginatedResult<CustomerDto>>> StartSeedingAsync([FromBody] GetPaginatedCustomersQuery query)
+    public async Task<ActionResult<PaginatedResult<CustomerDto>>> StartSeedingAsync([FromQuery] GetPaginatedCustomersQuery query)
     {
         var result = await _mediator.Send(query);
         return result;

@@ -23,7 +23,8 @@ public class UpdateCustomerCommandHandler : IRequestHandler<UpdateCustomerComman
 
     public async Task<Result<CustomerDto>> Handle(UpdateCustomerCommand request, CancellationToken cancellationToken)
     {
-        var entityToUpdate = await _unitOfWork.Customers.GetById(request.Id, readOnly: false)
+        var entityToUpdate = await _unitOfWork.Customers
+            .GetFilteredWithIncludes(entity => entity.Id == request.Id, readOnly: false, includes: [entity => entity.Contacts, entity => entity.FinancialProfile])
             ?? throw new Exception($"Клиент с ID {request.Id} не найден.");
 
         try
