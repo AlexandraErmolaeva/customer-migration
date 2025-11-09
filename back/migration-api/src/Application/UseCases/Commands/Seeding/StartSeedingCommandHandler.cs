@@ -28,7 +28,6 @@ public class StartSeedingCommandHandler : IRequestHandler<StartSeedingCommand, R
             sw.Start();
 
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), FILE_PATH, FILE_NAME);
-
             if (!File.Exists(filePath))
                 throw new FileNotFoundException($"Файл не найден по пути: {filePath}.");
 
