@@ -1,4 +1,5 @@
 ﻿using Application.Common.Dto;
+using Application.Dependencies.Logging;
 using Application.Dependencies.Services;
 using MediatR;
 using System.Diagnostics;
@@ -9,15 +10,17 @@ public class StartSeedingCommandHandler : IRequestHandler<StartSeedingCommand, R
 {
     private readonly IExcelCustomersReader _reader;
     private readonly ICustomerBatchProcessor _batchProcesser;
+    private readonly ILoggerManager _logger;
 
     private const int BATCH_SIZE = 30;
     private const string FILE_NAME = "testCards.xlsx";
     private const string FILE_PATH = "data";
 
-    public StartSeedingCommandHandler(IExcelCustomersReader reader, ICustomerBatchProcessor batchProcesser)
+    public StartSeedingCommandHandler(IExcelCustomersReader reader, ICustomerBatchProcessor batchProcesser, ILoggerManager logger)
     {
         _reader = reader;
         _batchProcesser = batchProcesser;
+        _logger = logger;
     }
 
     public async Task<Result<string>> Handle(StartSeedingCommand request, CancellationToken cancellationToken)
@@ -40,11 +43,16 @@ public class StartSeedingCommandHandler : IRequestHandler<StartSeedingCommand, R
             }
 
             sw.Stop();
+
+            if (totalProcessed == 0)
+                return Result<string>.Success($"Все записи о клиентах уже были перенесены в БД! Время выполнение операции {sw.ElapsedMilliseconds}ms");
+
             return Result<string>.Success($"Записи о клиентах в количестве {totalProcessed} успешно обработаны и сохранены в БД. Время выполнение операции {sw.ElapsedMilliseconds}ms");
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            throw;
+            _logger.LogError($"Произошла ошибка при миграции данных {ex}.");
+            return Result<string>.Failure(ex.Message);
         }
     }
 }

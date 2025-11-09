@@ -80,6 +80,6 @@ export default {
 }
 
 .transparent-card {
-  background: linear-gradient(13deg, #fdfdfd, #e2c8ff);
+  background: linear-gradient(13deg, #d8f7ff, #e2c8ff);
 }
 </style>

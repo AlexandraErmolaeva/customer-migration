@@ -1,6 +1,7 @@
 ﻿using Domain.Common.Dtos;
 using Domain.Entities.General;
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace Domain.Entities;
 

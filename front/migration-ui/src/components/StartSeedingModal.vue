@@ -1,10 +1,22 @@
 <template>
   <div v-if="visible" class="modal-overlay">
     <div class="modal-content">
-      <h2>Начать миграцию данных?</h2>
-      <div class="buttons">
-        <button class="btn-yes" @click="startSeeding">Да</button>
-        <button class="btn-no" @click="cancel">Нет</button>
+      <div v-if="!loading && !resultMessage">
+        <h2>Начать миграцию данных?</h2>
+        <div class="buttons">
+          <button class="btn-yes" @click="startSeeding">Да</button>
+          <button class="btn-no" @click="cancel">Нет</button>
+        </div>
+      </div>
+
+      <div v-else-if="loading" class="loading-container">
+        <h2>Идёт миграция...</h2>
+        <img src="../assets/gif/cat.gif" alt="Loading" />
+      </div>
+
+      <div v-else class="result-message">
+        <p class="result-message-content">{{ resultMessage }}</p>
+        <button class="btn-ok" @click="closeModal">Понятно!</button>
       </div>
     </div>
   </div>
@@ -18,18 +30,34 @@ export default {
     visible: Boolean,
   },
   emits: ['close'],
+  data() {
+    return {
+      loading: false,
+      resultMessage: '',
+    }
+  },
   methods: {
     async startSeeding() {
       try {
-        await customerService.startSeeding()
+        this.loading = true
+        const response = await customerService.startSeeding()
+        if (response.data.succeeded) {
+          this.resultMessage = response.data.resultData
+        } else {
+          this.resultMessage = 'Ошибка: ' + response.data.errorMessage
+        }
       } catch (err) {
         console.error(err)
+        this.resultMessage = 'Ошибка при миграции'
       } finally {
-        this.$emit('close')
-        this.$router.push('/customers')
+        this.loading = false
       }
     },
     cancel() {
+      this.$emit('close')
+      this.$router.push('/customers')
+    },
+    closeModal() {
       this.$emit('close')
       this.$router.push('/customers')
     },
@@ -64,6 +92,15 @@ export default {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+.result-message-content {
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 300;
+  font-size: 2.2rem;
+  letter-spacing: 0.9px;
+  margin-bottom: 2rem;
+}
+
 .modal-content h2 {
   font-size: 2.2rem;
   margin-bottom: 2rem;
@@ -79,6 +116,7 @@ export default {
   flex-wrap: wrap;
 }
 
+.btn-ok,
 .buttons button {
   padding: 1rem 2.5rem;
   font-size: 1.3rem;
@@ -91,11 +129,13 @@ export default {
   text-transform: uppercase;
 }
 
+.btn-ok,
 .btn-yes {
   background: linear-gradient(13deg, #c14fff, #79d5ec);
   color: #333333;
 }
 
+.btn-ok:hover,
 .btn-yes:hover {
   transform: translateY(-3px) scale(1.05);
   box-shadow: 0 0px 20px rgba(102, 242, 252, 0.4);

@@ -22,9 +22,9 @@ public class SeedingController : ControllerBase
     /// <param name="command"></param>
     /// <returns></returns>
     [HttpPost("Start")]
-    public async Task<ActionResult<Result<string>>> StartSeedingAsync([FromBody] StartSeedingCommand command)
+    public async Task<ActionResult<Result<string>>> StartSeedingAsync()
     {
-        var result = await _mediator.Send(command);
+        var result = await _mediator.Send(new StartSeedingCommand());
         return result;
     }
 }

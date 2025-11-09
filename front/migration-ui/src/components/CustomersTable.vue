@@ -10,12 +10,12 @@
           <th>Телефон</th>
           <th>Email</th>
           <th>Пол</th>
-          <th>День рождения</th>
+          <th>Дата рождения</th>
           <th>Город</th>
           <th>Пин-код</th>
           <th>Бонус, руб.</th>
           <th>Оборот, руб.</th>
-          <th>Действия</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -55,10 +55,14 @@
           </td>
 
           <td>
-            <input
+            <select
               v-model="customer.gender"
-              :class="{ modified: isModified(customer, 'gender') }"
-            />
+              :class="['input', { modified: isModified(customer, 'gender') }]"
+            >
+              <option :value="2">Женский</option>
+              <option :value="4">Мужской</option>
+              <option :value="0">Неизвестно</option>
+            </select>
           </td>
           <td>
             <input
@@ -99,12 +103,18 @@
 
     <div style="margin-top: 15px">
       <button @click="prevPage" :disabled="currentPage === 1">⬅</button>
-      <span style="margin: 0 10px">Страница {{ currentPage }} из {{ totalPages }}</span>
+      <span class="custom-text" style="margin: 0 10px"
+        >Страница {{ currentPage }} из {{ totalPages }}</span
+      >
       <button @click="nextPage" :disabled="currentPage === totalPages">➡</button>
     </div>
 
-    <p v-if="errorMessage" style="color: red">{{ errorMessage }}</p>
-    <p class="total-count">Всего клиентов: {{ totalCount }}</p>
+    <p class="custom-text">Всего клиентов: {{ totalCount }}</p>
+
+    <p v-if="!errorMessage && customers.length === 0" class="custom-text" style="color: #555">
+      Нет данных для отображения
+    </p>
+    <p v-if="errorMessage" class="custom-text" style="color: red">{{ errorMessage }}</p>
   </div>
 </template>
 
@@ -213,6 +223,18 @@ export default {
       isModified,
     }
   },
+  methods: {
+    mapGenger(genderCode) {
+      switch (genderCode) {
+        case 2:
+          return 'Женский'
+        case 4:
+          return 'Мужской'
+        default:
+          return 'Неизвестно'
+      }
+    },
+  },
 }
 </script>
 
@@ -242,7 +264,7 @@ thead th {
   font-weight: 500;
   font-size: 20px;
   text-align: center;
-  border-bottom: 1px solid #74b3b8;
+  border-bottom: 1px solid #cf8cdf;
 }
 
 tbody td {
@@ -257,9 +279,9 @@ tbody td {
 input {
   color: #333333;
   width: 100%;
-  padding: 4px 8px;
+  padding: 6px 8px;
   font-size: 18px;
-  border: 1px solid #4cbba3;
+  border: 1px solid #cf8cdf;
   border-radius: 20px;
   transition:
     border-color 0.2s,
@@ -291,9 +313,8 @@ button {
 }
 
 button:hover:not(:disabled) {
-  background: #fbc608;
   transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 0px 35px rgba(255, 191, 42, 0.4);
+  box-shadow: 0 0px 20px rgba(102, 242, 252, 0.4);
 }
 
 div[style*='margin-top: 15px'] {
@@ -302,8 +323,32 @@ div[style*='margin-top: 15px'] {
   justify-content: center;
 }
 
-.total-count {
-  font-size: 18px;
+.custom-text {
+  font-size: 19px;
   font-weight: 450;
+}
+
+select.input {
+  color: #333333;
+  width: 100%;
+  padding: 4px 8px;
+  font-size: 18px;
+  border: 1px solid #cf8cdf;
+  border-radius: 20px;
+  text-align: center;
+  font-weight: 450;
+  transition:
+    border-color 0.2s,
+    background-color 0.2s;
+}
+
+select.input:focus {
+  outline: none;
+  border-color: #e2aa31;
+}
+
+select.input.modified {
+  background-color: #f9c34e;
+  border-color: #fbc608;
 }
 </style>
