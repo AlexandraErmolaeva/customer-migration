@@ -1,0 +1,51 @@
+﻿using Application.Common.Dto;
+using Application.Dependencies.Services;
+using MediatR;
+using System.Diagnostics;
+
+namespace Application.UseCases.Commands.Seeding;
+
+public class StartSeedingCommandHandler : IRequestHandler<StartSeedingCommand, Result<string>>
+{
+    private readonly IExcelCustomersReader _reader;
+    private readonly ICustomerBatchProcessor _batchProcesser;
+
+    private const int BATCH_SIZE = 30;
+    private const string FILE_NAME = "testCards.xlsx";
+    private const string FILE_PATH = "data";
+
+    public StartSeedingCommandHandler(IExcelCustomersReader reader, ICustomerBatchProcessor batchProcesser)
+    {
+        _reader = reader;
+        _batchProcesser = batchProcesser;
+    }
+
+    public async Task<Result<string>> Handle(StartSeedingCommand request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var sw = new Stopwatch();
+            sw.Start();
+
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), FILE_PATH, FILE_NAME);
+
+            if (!File.Exists(filePath))
+                throw new FileNotFoundException($"Файл не найден по пути: {filePath}.");
+
+            var totalProcessed = 0;
+            await foreach (var batch in _reader.ReadCustomersDataAsync(filePath, BATCH_SIZE, cancellationToken))
+            {
+                var processedCount = await _batchProcesser.ProcessCustomerBatchAsync(batch, cancellationToken);
+                totalProcessed += processedCount;
+                // await Task.Delay(666); Убираем, чтоб не ждать.
+            }
+
+            sw.Stop();
+            return Result<string>.Success($"Записи о клиентах в количестве {totalProcessed} успешно обработаны и сохранены в БД. Время выполнение операции {sw.ElapsedMilliseconds}ms");
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+}
