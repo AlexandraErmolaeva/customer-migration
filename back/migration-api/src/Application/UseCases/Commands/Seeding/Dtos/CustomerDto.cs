@@ -6,6 +6,7 @@ namespace Application.UseCases.Commands.Seeding.Dtos;
 
 public class CustomerDto : IMapFrom<CustomerEntity>
 {
+    public Guid Id { get; set; }
     public string CardCode { get; set; }
     public string? LastName { get; set; }
     public string? FirstName { get; set; }

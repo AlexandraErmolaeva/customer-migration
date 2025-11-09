@@ -1,5 +1,4 @@
 ﻿using Application.Common.Dto;
-using Application.Dependencies.Logging;
 using Application.UseCases.Commands.Seeding;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -11,14 +10,17 @@ namespace CustomerMigrationApi.Controllers;
 public class SeedingController : ControllerBase
 {
     private readonly IMediator _mediator;
-    private readonly ILoggerManager _logger;
 
-    public SeedingController(IMediator mediator, ILoggerManager logger)
+    public SeedingController(IMediator mediator)
     {
         _mediator = mediator;
-        _logger = logger;
     }
 
+    /// <summary>
+    /// Начать миграцию записей из ексель таблицы в БД.
+    /// </summary>
+    /// <param name="command"></param>
+    /// <returns></returns>
     [HttpPost("Start")]
     public async Task<ActionResult<Result<string>>> StartSeedingAsync([FromBody] StartSeedingCommand command)
     {

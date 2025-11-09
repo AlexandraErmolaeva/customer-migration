@@ -5,7 +5,7 @@ services:
     image: mcr.microsoft.com/mssql/server:2017-latest
     container_name: customers-db-mssql
     environment:
-      SA_PASSWORD: "YourStrong!Passw0rd"
+      SA_PASSWORD: ${SA_PASSWORD}
       ACCEPT_EULA: "Y"
       TZ: "Russian Standard Time"
     ports:

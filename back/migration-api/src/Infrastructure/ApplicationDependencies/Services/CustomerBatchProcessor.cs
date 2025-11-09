@@ -41,6 +41,7 @@ public sealed class CustomerBatchProcessor : ICustomerBatchProcessor
         token.ThrowIfCancellationRequested();
         try
         {
+            // TODO: Cтоит вынести транзакции на уровень выше.
             await _unitOfWork.BeginTransactionAsync();
             _unitOfWork.Customers.AddRange(entities);
             await _unitOfWork.CommitTransactionAsync();

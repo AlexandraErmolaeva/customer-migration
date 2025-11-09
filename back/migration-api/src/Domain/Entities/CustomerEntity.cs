@@ -1,4 +1,5 @@
-﻿using Domain.Entities.General;
+﻿using Domain.Common.Dtos;
+using Domain.Entities.General;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entities;
@@ -19,6 +20,26 @@ public class CustomerEntity : EntityBase
 
     public FinancialProfileEntity FinancialProfile { get; private set; }
     public Guid? FinancialProfileId { get; private set; }
+
+    public CustomerEntity Update(UpdateCustomerDto dto)
+    {
+        if (string.IsNullOrWhiteSpace(dto.CardCode))
+            throw new ArgumentException("CardCode не может быть пустым.");
+
+        LastModifiedAt = DateTime.UtcNow;
+        CardCode = dto.CardCode;
+        LastName = dto.LastName;
+        FirstName = dto.FirstName;
+        SurName = dto.SurName;
+        Gender = dto.Gender;
+        Birthday = dto.Birthday;
+        City = dto.City;
+
+        Contacts.Update(dto.UpdateContactsDto);
+        FinancialProfile.Update(dto.UpdateFinancialProfileDto);
+
+        return this;
+    }
 }
 
 public enum Gender
