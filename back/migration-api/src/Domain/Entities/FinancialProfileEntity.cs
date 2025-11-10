@@ -13,7 +13,7 @@ public class FinancialProfileEntity : EntityBase
     [Required]
     public CustomerEntity Customer { get; private set; }
 
-    public FinancialProfileEntity Update(UpdateFinancialProfileDto dto)
+    internal FinancialProfileEntity Update(UpdateFinancialProfileDto dto)
     {
         if (dto.Bonus < 0)
             throw new ArgumentException($"Невозможно установить отрицательное значение для бонуса.");

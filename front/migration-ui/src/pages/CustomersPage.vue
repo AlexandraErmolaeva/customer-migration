@@ -6,7 +6,7 @@
           <v-card-text>
             <v-row align="center">
               <v-col cols="9">
-                <v-card-title class="card-title"> Список клиентов </v-card-title>
+                <v-card-title class="card-title"> Клиенты компании </v-card-title>
               </v-col>
               <v-col cols="3" class="d-flex justify-end align-center">
                 <button

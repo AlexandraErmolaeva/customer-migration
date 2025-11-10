@@ -7,8 +7,5 @@ public class CustomerSpecification : IBaseSpecification<CustomerEntity>
 {
     public Func<IQueryable<CustomerEntity>, IOrderedQueryable<CustomerEntity>> Sorter => q => q.OrderByDescending(o => o.CreatedAt);
 
-    public Expression<Func<CustomerEntity, bool>> ToExpressions()
-    {
-        return null;
-    }
+    public Expression<Func<CustomerEntity, bool>> ToExpressions() => null;
 }

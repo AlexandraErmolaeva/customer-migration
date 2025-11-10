@@ -35,7 +35,6 @@ public static class DbContextConfiguration
         {
             var logger = scope.ServiceProvider.GetRequiredService<ILoggerManager>();
             logger.LogError($"Не удалось применить миграции при запуске приложения. Ошибка {ex.Message}, {ex.StackTrace}.");
-            throw;
         }
     }
 }

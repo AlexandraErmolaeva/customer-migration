@@ -2,27 +2,24 @@
 using Application.UseCases.Commands.Seeding;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace CustomerMigrationApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class SeedingController : ControllerBase
+public class MigrationController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public SeedingController(IMediator mediator)
+    public MigrationController(IMediator mediator)
     {
         _mediator = mediator;
     }
 
-    /// <summary>
-    /// Начать миграцию записей из ексель таблицы в БД.
-    /// </summary>
-    /// <param name="command"></param>
-    /// <returns></returns>
+    [SwaggerOperation(Summary = "Начать миграцию записей из xlsx файла в БД.")]
     [HttpPost("Start")]
-    public async Task<ActionResult<Result<string>>> StartSeedingAsync()
+    public async Task<ActionResult<Result<string>>> StartMigration()
     {
         var result = await _mediator.Send(new StartSeedingCommand());
         return result;

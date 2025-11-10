@@ -15,6 +15,9 @@ public class GetPaginatedCustomersQueryHandler : IRequestHandler<GetPaginatedCus
         _unitOfWork = unitOfWork;
     }
 
+    /// <summary>
+    /// Забираем пагинированные записи из БД.
+    /// </summary>
     public async Task<PaginatedResult<CustomerDto>> Handle(GetPaginatedCustomersQuery request, CancellationToken cancellationToken)
     {
         var spec = new CustomerSpecification();

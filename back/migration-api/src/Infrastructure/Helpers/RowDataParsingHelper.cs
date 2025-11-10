@@ -1,14 +1,12 @@
-﻿using Domain.Entities;
+﻿using Application.Common.Validators;
+using Domain.Entities;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace Infrastructure.Helpers;
 
-public static class DataParsingHelper
+public static class RowDataParsingHelper
 {
-    private const string NAME_DEFAULT_PATTERN = @"[^a-zA-Zа-яА-ЯёЁ\s]";
-    private const string GENDER_DEFAULT_PATTERN = @"[^а-яё]";
-
     private static readonly Dictionary<string, Gender> _genderMap = new()
     {
         ["м"] = Gender.MALE,
@@ -44,12 +42,13 @@ public static class DataParsingHelper
     /// <returns></returns>
     public static Gender? ParseGender(string value)
     {
-        if (string.IsNullOrEmpty(value))
+        var stringGender = NormalizeByPattern(RegexPatterns.GENDER_EXCLUDE_PATTERN, value);
+        if (string.IsNullOrWhiteSpace(stringGender))
             return null;
 
-        value = value.Trim().ToLower();
-        value = Regex.Replace(value, GENDER_DEFAULT_PATTERN, "");
-        return _genderMap.TryGetValue(value, out var gender) ? gender : null;
+        stringGender = stringGender.ToLower();
+
+        return _genderMap.TryGetValue(stringGender, out var gender) ? gender : null;
     }
 
     /// <summary>
@@ -78,11 +77,28 @@ public static class DataParsingHelper
     /// <returns></returns>
     public static string NormalizeName(string value)
     {
+        var name = NormalizeByPattern(RegexPatterns.NAME_EXCLUDE_PATTERN, value);
+        return name;
+    }
+
+    /// <summary>
+    /// Парсим город. Оставляем тире, пробелы.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static string NormalizeCity(string value)
+    {
+        var city = NormalizeByPattern(RegexPatterns.CITY_EXCLUDE_PATTERN, value);
+        return city;
+    }
+
+    private static string NormalizeByPattern(string pattern, string value)
+    {
         if (string.IsNullOrEmpty(value))
             return null;
 
         value = value.Trim();
-        var normalizedValue = Regex.Replace(value, NAME_DEFAULT_PATTERN, "");
+        var normalizedValue = Regex.Replace(value, pattern, "");
 
         if (string.IsNullOrEmpty(normalizedValue))
             return null;

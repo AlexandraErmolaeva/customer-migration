@@ -8,9 +8,9 @@ namespace Infrastructure.ApplicationDependencies.DataAccess.Repositories;
 
 internal sealed class FinancialProfileRepository : GuidRepositoryBase<FinancialProfileEntity>, IFinancialProfileRepository
 {
+    protected override IQueryable<FinancialProfileEntity> BaseQuery => _context.FinancialProfiles;
+
     public FinancialProfileRepository(CustomersDbContext context, IMapper mapper) : base(context, mapper)
     {
     }
-
-    protected override IQueryable<FinancialProfileEntity> BaseQuery => _context.FinancialProfiles;
 }

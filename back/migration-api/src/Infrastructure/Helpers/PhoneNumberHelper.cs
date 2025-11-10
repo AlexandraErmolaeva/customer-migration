@@ -1,11 +1,11 @@
-﻿using System.Text.RegularExpressions;
+﻿using Application.Common.Dto;
+using Application.Common.Validators;
+using System.Text.RegularExpressions;
 
 namespace Infrastructure.Helpers;
 
 public static class PhoneNumberHelper
 {
-    static string _defaultPattern = @"^79\d{9}$";
-
     /// <summary>
     /// Возвращает или валидный номер телефона ="+7"&СЛУЧМЕЖДУ(9000000000;9999999999) без "+", или null.
     /// </summary>
@@ -25,13 +25,8 @@ public static class PhoneNumberHelper
     }
 
     private static string NormalizePhoneNumber(string phoneNumber)
-        => phoneNumber
-            .Replace("+", "")
-            .Replace(" ", "")
-            .Replace("-", "")
-            .Replace("(", "")
-            .Replace(")", "");
+        => phoneNumber = Regex.Replace(phoneNumber, RegexPatterns.PHONE_CLEANAUP_PATTERN, "");
 
     private static bool IsValidPhoneNumber(string normalizedPhoneNumber)
-        => Regex.IsMatch(normalizedPhoneNumber, _defaultPattern);
+        => Regex.IsMatch(normalizedPhoneNumber, RegexPatterns.PHONE_DEFAULT_PATTERN);
 }

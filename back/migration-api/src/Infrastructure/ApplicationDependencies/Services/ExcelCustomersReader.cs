@@ -32,25 +32,25 @@ public sealed class ExcelCustomersReader : IExcelCustomersReader
             {
                 CardCode = reader.GetValue(0)?.ToString(),
 
-                LastName = DataParsingHelper.NormalizeName(reader.GetValue(1)?.ToString()),
-                FirstName = DataParsingHelper.NormalizeName(reader.GetValue(2)?.ToString()),
-                SurName = DataParsingHelper.NormalizeName(reader.GetValue(3)?.ToString()),
+                LastName = RowDataParsingHelper.NormalizeName(reader.GetValue(1)?.ToString()),
+                FirstName = RowDataParsingHelper.NormalizeName(reader.GetValue(2)?.ToString()),
+                SurName = RowDataParsingHelper.NormalizeName(reader.GetValue(3)?.ToString()),
 
-                Gender = DataParsingHelper.ParseGender(reader.GetValue(6)?.ToString()),
-                Birthday = DataParsingHelper.ParseDate(reader.GetValue(7)?.ToString()),
-                City = reader.GetValue(8)?.ToString(),
+                Gender = RowDataParsingHelper.ParseGender(reader.GetValue(6)?.ToString()),
+                Birthday = RowDataParsingHelper.ParseDate(reader.GetValue(7)?.ToString()),
+                City = RowDataParsingHelper.NormalizeCity(reader.GetValue(8)?.ToString()),
 
                 Contacts = new ContactsDto
                 {
                     Email = reader.GetValue(5)?.ToString(),
-                    PhoneMobile = DataParsingHelper.ParsePhoneMobile(reader.GetValue(4)?.ToString())
+                    PhoneMobile = RowDataParsingHelper.ParsePhoneMobile(reader.GetValue(4)?.ToString())
                 },
 
                 FinancialProfile = new FinancialProfileDto
                 {
                     Pincode = reader.GetValue(9)?.ToString(),
-                    Bonus = DataParsingHelper.ParseDecimal(reader.GetValue(10)?.ToString()),
-                    Turnover = DataParsingHelper.ParseDecimal(reader.GetValue(11)?.ToString())
+                    Bonus = RowDataParsingHelper.ParseDecimal(reader.GetValue(10)?.ToString()),
+                    Turnover = RowDataParsingHelper.ParseDecimal(reader.GetValue(11)?.ToString())
                 }
             };
 

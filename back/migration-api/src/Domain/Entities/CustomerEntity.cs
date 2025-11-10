@@ -23,6 +23,7 @@ public class CustomerEntity : EntityBase
 
     public CustomerEntity Update(UpdateCustomerDto dto)
     {
+        // Пытаемся защитить инварианты.
         if (string.IsNullOrWhiteSpace(dto.CardCode))
             throw new ArgumentException("CardCode не может быть пустым.");
 

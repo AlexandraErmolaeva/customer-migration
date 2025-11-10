@@ -4,6 +4,7 @@ using Application.UseCases.Commands.Update.Customer;
 using Application.UseCases.Queries.Customer.Get.All;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace WebApi.Controllers;
 
@@ -18,13 +19,15 @@ public class CustomerController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet("Get/All")]
+    [SwaggerOperation(Summary = "Получить пагинированные записи клиентов из БД.")]
+    [HttpGet("Get/Paginated")]
     public async Task<ActionResult<PaginatedResult<CustomerDto>>> GetCustomers([FromQuery] GetPaginatedCustomersQuery query)
     {
         var result = await _mediator.Send(query);
         return result;
     }
 
+    [SwaggerOperation(Summary = "Обновить данные клиента.")]
     [HttpPost("Update")]
     public async Task<ActionResult<Result<CustomerDto>>> UpdateCustomer([FromBody] UpdateCustomerCommand command)
     {

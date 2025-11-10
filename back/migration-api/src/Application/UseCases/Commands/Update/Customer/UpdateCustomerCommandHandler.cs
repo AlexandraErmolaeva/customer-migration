@@ -21,10 +21,15 @@ public class UpdateCustomerCommandHandler : IRequestHandler<UpdateCustomerComman
         _logger = logger;
     }
 
+    /// <summary>
+    /// Обновляем запись.
+    /// </summary>
     public async Task<Result<CustomerDto>> Handle(UpdateCustomerCommand request, CancellationToken cancellationToken)
     {
         var entityToUpdate = await _unitOfWork.Customers
-            .GetFilteredWithIncludes(entity => entity.Id == request.Id, readOnly: false, includes: [entity => entity.Contacts, entity => entity.FinancialProfile])
+            .GetFilteredWithIncludes(entity => entity.Id == request.Id, 
+            readOnly: false, 
+            includes: [entity => entity.Contacts, entity => entity.FinancialProfile]) 
             ?? throw new Exception($"Клиент с ID {request.Id} не найден.");
 
         try

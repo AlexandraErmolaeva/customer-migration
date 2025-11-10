@@ -31,7 +31,7 @@ public sealed class CustomerBatchProcessor : ICustomerBatchProcessor
     {
         token.ThrowIfCancellationRequested();
 
-        var entities = await GetEntitiesToSave(batchDtos);
+        var entities = await GetEntityToCreate(batchDtos);
         if(!entities.Any())
         {
             _logger.LogInfo($"Записи из батча в БД уже существуют, их CardCod`ы: {string.Join(", ", batchDtos.Select(dto => dto.CardCode))}.");
@@ -61,7 +61,7 @@ public sealed class CustomerBatchProcessor : ICustomerBatchProcessor
     /// </summary>
     /// <param name="batchDtos"></param>
     /// <returns></returns>
-    private async Task<List<CustomerEntity>> GetEntitiesToSave(List<CustomerDto> batchDtos)
+    private async Task<List<CustomerEntity>> GetEntityToCreate(List<CustomerDto> batchDtos)
     {
         var dtoCardCodes = batchDtos.Select(dto => dto.CardCode).ToList();
 

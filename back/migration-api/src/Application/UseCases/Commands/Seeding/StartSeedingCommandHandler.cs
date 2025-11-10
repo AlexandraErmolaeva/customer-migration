@@ -23,16 +23,22 @@ public class StartSeedingCommandHandler : IRequestHandler<StartSeedingCommand, R
         _logger = logger;
     }
 
+    /// <summary>
+    /// Мигрируем данные из екселя в БД батчами.
+    /// Библиотеку выбрала ExcelDataReader, тк позволяет потоком забирать батчи, а не грузить весь ексель файл в память.
+    /// </summary>
     public async Task<Result<string>> Handle(StartSeedingCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            var sw = new Stopwatch();
-            sw.Start();
-
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), FILE_PATH, FILE_NAME);
             if (!File.Exists(filePath))
                 throw new FileNotFoundException($"Файл не найден по пути: {filePath}.");
+
+            // --
+            var sw = new Stopwatch();
+            sw.Start();
+            // --
 
             var totalProcessed = 0;
             await foreach (var batch in _reader.ReadCustomersDataAsync(filePath, BATCH_SIZE, cancellationToken))
@@ -42,12 +48,14 @@ public class StartSeedingCommandHandler : IRequestHandler<StartSeedingCommand, R
                 // await Task.Delay(666); Убираем, чтоб не ждать.
             }
 
+            // --
             sw.Stop();
+            // --
 
             if (totalProcessed == 0)
                 return Result<string>.Success($"Все записи о клиентах уже были перенесены в БД! Время перепроверки составило {sw.ElapsedMilliseconds}ms");
 
-            return Result<string>.Success($"Записи о клиентах в количестве {totalProcessed} успешно обработаны и сохранены в БД. Время выполнение операции {sw.ElapsedMilliseconds}ms");
+            return Result<string>.Success($"Записи о клиентах в количестве {totalProcessed} успешно обработаны и сохранены в БД! Время выполнение операции {sw.ElapsedMilliseconds}ms.");
         }
         catch (Exception ex)
         {

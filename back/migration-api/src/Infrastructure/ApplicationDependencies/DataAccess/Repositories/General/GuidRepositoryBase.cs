@@ -36,6 +36,13 @@ internal abstract class GuidRepositoryBase<TEntity> : IGuidRepository<TEntity> w
     public virtual async Task<IEnumerable<TEntity>> GetFilteredList(Expression<Func<TEntity, bool>> filter, bool readOnly = false)
        => await (readOnly ? BaseQuery.AsNoTracking() : BaseQuery).Where(filter).ToListAsync();
 
+    /// <summary>
+    /// Получить запись с примененными фильтрами и связанными свойствами.
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <param name="readOnly"></param>
+    /// <param name="includes"></param>
+    /// <returns></returns>
     public virtual async Task<TEntity> GetFilteredWithIncludes(Expression<Func<TEntity, bool>> filter, bool readOnly = false, params Expression<Func<TEntity, object>>[] includes)
     {
         var query = readOnly ? BaseQuery.AsNoTracking() : BaseQuery;
@@ -48,6 +55,12 @@ internal abstract class GuidRepositoryBase<TEntity> : IGuidRepository<TEntity> w
         return await query.FirstOrDefaultAsync(filter);
     }
 
+    /// <summary>
+    /// Получить список записей ДТО при помощи проекции сущностей.
+    /// </summary>
+    /// <typeparam name="TDto"></typeparam>
+    /// <param name="filter"></param>
+    /// <returns></returns>
     public virtual async Task<List<TDto>> GetProjectedListAsync<TDto>(Expression<Func<TEntity, bool>> filter = null) where TDto : IMapFrom<TEntity>
     {
         var query = BaseQuery;

@@ -2,7 +2,8 @@
   <div v-if="visible" class="modal-overlay">
     <div class="modal-content">
       <h2>Ошибка</h2>
-      <p class="error-message">{{ message }}</p>
+      <p class="error-content">ID {{ id }}</p>
+      <p class="error-content">{{ message }}</p>
       <button @click="close">Понятно!</button>
     </div>
   </div>
@@ -14,6 +15,7 @@ export default {
     return {
       visible: false,
       message: '',
+      id: '',
     }
   },
   mounted() {
@@ -26,9 +28,12 @@ export default {
     showError(event) {
       this.message = event.detail.message
       this.visible = true
+      this.id = event.detail.id
     },
     close() {
       this.visible = false
+      this.message = ''
+      this.id = ''
     },
   },
 }
@@ -53,8 +58,8 @@ export default {
   box-shadow: 0 0px 20px rgba(102, 242, 252, 0.4);
 }
 
-.error-message {
-  padding: 2rem;
+.error-content {
+  padding: 15px;
   border-radius: 20px;
   max-width: 700px;
   text-align: center;

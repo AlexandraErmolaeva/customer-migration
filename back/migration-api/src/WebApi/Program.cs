@@ -1,11 +1,12 @@
+using Application;
+using CustomerMigrationApi.Confugirations;
+using CustomerMigrationApi.Services.Middlewares;
 using DotNetEnv;
+using Infrastructure;
+using Infrastructure.Persistence;
 using System.Reflection;
 using WebApi.Configurations;
-using Application;
-using CustomerMigrationApi.Services.Middlewares;
-using Infrastructure;
-using CustomerMigrationApi.Confugirations;
-using Infrastructure.Persistence;
+using WebApi.Services.Filters;
 
 Env.TraversePath().Load();
 
@@ -16,7 +17,10 @@ var services = builder.Services;
 builder.AddLogger();
 
 services.AddSwagger(assemblyName.Name!);
-services.AddControllers();
+services.AddControllers(options =>
+{
+    options.Filters.Add<PhoneNumberCleanupFilter>();
+});
 services.AddApplicationServices();
 services.AddInfrastrucureServices(builder.Configuration, builder.Environment.IsDevelopment());
 

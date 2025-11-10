@@ -1,7 +1,6 @@
 ﻿using Domain.Common.Dtos;
 using Domain.Entities.General;
 using System.ComponentModel.DataAnnotations;
-using System.Text.RegularExpressions;
 
 namespace Domain.Entities;
 
@@ -13,7 +12,7 @@ public class ContactsEntity : EntityBase
     [Required]
     public CustomerEntity Customer { get; private set; }
 
-    public ContactsEntity Update(UpdateContactsDto dto)
+    internal ContactsEntity Update(UpdateContactsDto dto)
     {
         LastModifiedAt = DateTime.UtcNow;
         PhoneMobile = dto.PhoneMobile;
