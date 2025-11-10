@@ -83,15 +83,15 @@ export default {
 }
 
 .modal-content {
-  background: rgba(223, 206, 255, 0.75);
+  background: linear-gradient(13deg, #329ab5, #ac61d4);
   border-radius: 20px;
   padding: 3rem 4rem;
   text-align: center;
   backdrop-filter: blur(12px);
-  box-shadow: 0 0px 30px rgba(102, 242, 252, 0.4);
+  box-shadow: 0 0px 20px rgba(102, 242, 252, 0.4);
   min-width: 700px;
   max-width: 90%;
-  color: #333333;
+  color: #ffffff;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -109,7 +109,7 @@ export default {
   margin-bottom: 2rem;
   font-weight: 300;
   letter-spacing: 0.9px;
-  color: #333333;
+  color: #ffffff;
 }
 
 .buttons {
@@ -121,11 +121,12 @@ export default {
 
 .btn-ok,
 .buttons button {
-  padding: 1rem 2.5rem;
+  padding: 1rem 2rem;
   font-size: 1.3rem;
+
   font-weight: 450;
-  border: none;
   border-radius: 20px;
+  border: 2px solid #eb95f5;
   cursor: pointer;
   transition: all 0.25s ease;
   min-width: 200px;
@@ -134,8 +135,7 @@ export default {
 
 .btn-ok,
 .btn-yes {
-  background: linear-gradient(13deg, #bc75e2, #79d5ec);
-  color: #333333;
+  color: #ffffff;
 }
 
 .btn-ok:hover,
@@ -145,8 +145,7 @@ export default {
 }
 
 .btn-no {
-  background: linear-gradient(13deg, #bc75e2, #79d5ec);
-  color: #333333;
+  color: #ffffff;
 }
 
 .btn-no:hover {

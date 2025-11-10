@@ -4,7 +4,10 @@
     <main class="layout-content">
       <router-view />
     </main>
-    <footer class="layout-footer">© 2025 RobotX</footer>
+    <footer class="layout-footer">
+      © 2025 RobotX
+      <img src="../assets/footercat.png" style="width: 35px; height: 35px" />
+    </footer>
   </div>
 </template>
 

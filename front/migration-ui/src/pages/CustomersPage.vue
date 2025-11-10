@@ -69,21 +69,21 @@ export default {
 
 <style scoped>
 .customer-page-button {
-  padding: 1rem 2rem;
-  font-size: 1.2rem;
+  padding: 1rem 3rem;
+  font-size: 20px;
   font-weight: 450;
   border-radius: 20px;
   cursor: pointer;
   transition: all 0.25s ease;
-  min-width: 100px;
+  min-width: 400px;
   text-transform: uppercase;
-  background: linear-gradient(13deg, #bc75e2, #79d5ec);
-  color: #333333;
+  background: linear-gradient(13deg, #bc75e2, #92b3ff);
+  color: #2f2f2f;
 }
 
 .customer-page-button:hover {
   transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 0px 20px rgba(102, 242, 252, 0.4);
+  box-shadow: 0 0px 20px rgba(255, 255, 255, 0.659);
 }
 
 .card-title {
@@ -91,14 +91,14 @@ export default {
   font-weight: 500;
   min-width: 100px;
   text-transform: uppercase;
-  color: #333333;
+  color: #2f2f2f;
 }
 
 .transparent-card {
-  background: linear-gradient(13deg, #d8f7ff, #e2c8ff);
+  background: linear-gradient(13deg, #fae6ff, #b5efff);
   border-radius: 30px;
   overflow: hidden;
-  box-shadow: 0 0px 20px rgba(102, 242, 252, 0.4);
+  box-shadow: 0 0px 50px rgba(102, 242, 252, 0.6);
 }
 
 .customer-page-button + .customer-page-button {

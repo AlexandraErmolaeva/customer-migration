@@ -61,7 +61,6 @@
             >
               <option :value="2">Женский</option>
               <option :value="4">Мужской</option>
-              <option :value="0">Неизвестно</option>
             </select>
           </td>
           <td>
@@ -94,24 +93,27 @@
               :class="{ modified: isModified(customer, 'financialProfile.turnover') }"
             />
           </td>
-          <td>
-            <button @click="editCustomer(customer)">Сохранить</button>
-          </td>
         </tr>
       </tbody>
     </table>
 
-    <div style="margin-top: 15px">
+    <div style="margin-top: 15px; text-align: center">
       <button @click="prevPage" :disabled="currentPage === 1">⬅</button>
-      <span class="custom-text" style="margin: 0 10px"
-        >Страница {{ currentPage }} из {{ totalPages }}</span
-      >
-      <button @click="nextPage" :disabled="currentPage === totalPages">➡</button>
+      <span class="custom-text" style="margin: 0 10px">
+        Страница {{ currentPage }} из {{ totalPages }}
+      </span>
+
+      <span style="display: inline-flex; align-items: center; gap: 50px">
+        <button @click="nextPage" :disabled="currentPage === totalPages">➡</button>
+        <button @click="saveAllChanges" :class="{ highlighted: hasModified }">
+          Сохранить изменения
+        </button>
+      </span>
     </div>
 
     <p class="custom-text">Всего клиентов: {{ totalCount }}</p>
 
-    <p v-if="!errorMessage && customers.length === 0" class="custom-text" style="color: #555">
+    <p v-if="!errorMessage && customers.length === 0" class="custom-text" style="color: #e1e1e1">
       Нет данных для отображения
     </p>
     <p v-if="errorMessage" class="custom-text" style="color: red">{{ errorMessage }}</p>
@@ -178,11 +180,15 @@ export default {
         fetchCustomers()
       }
     }
-
-    const editCustomer = async (customer) => {
+    const saveAllChanges = async () => {
       try {
         loading.value = true
-        await customerService.updateCustomer(customer)
+        for (const customer of customers.value) {
+          const original = originalCustomers.value[customer.id]
+          if (JSON.stringify(original) !== JSON.stringify(customer)) {
+            await customerService.updateCustomer(customer)
+          }
+        }
         await fetchCustomers()
       } catch (err) {
         console.error(err)
@@ -190,6 +196,24 @@ export default {
         loading.value = false
       }
     }
+
+    const hasModified = computed(() => {
+      return customers.value.some((customer) => {
+        return (
+          isModified(customer, 'lastName') ||
+          isModified(customer, 'firstName') ||
+          isModified(customer, 'surName') ||
+          isModified(customer, 'contacts.phoneMobile') ||
+          isModified(customer, 'contacts.email') ||
+          isModified(customer, 'gender') ||
+          isModified(customer, 'birthday') ||
+          isModified(customer, 'city') ||
+          isModified(customer, 'financialProfile.pincode') ||
+          isModified(customer, 'financialProfile.bonus') ||
+          isModified(customer, 'financialProfile.turnover')
+        )
+      })
+    })
 
     const isModified = (customer, fieldPath) => {
       const original = originalCustomers.value[customer.id]
@@ -215,12 +239,13 @@ export default {
       loading,
       errorMessage,
       refreshData,
-      editCustomer,
       currentPage,
       totalPages,
       nextPage,
       prevPage,
       isModified,
+      saveAllChanges,
+      hasModified,
     }
   },
   methods: {
@@ -259,7 +284,7 @@ td {
 }
 
 thead th {
-  color: #333333;
+  color: #2f2f2f;
   padding: 12px 15px;
   font-weight: 500;
   font-size: 20px;
@@ -270,14 +295,14 @@ thead th {
 tbody td {
   padding: 7px 8px;
   font-size: 18px;
-  color: #333333;
+  color: #2f2f2f;
   border-bottom: 1px solid transparent;
   text-align: center;
   font-weight: 500;
 }
 
 input {
-  color: #333333;
+  color: #2f2f2f;
   width: 100%;
   padding: 6px 8px;
   font-size: 18px;
@@ -292,29 +317,28 @@ input {
 
 input:focus {
   outline: none;
-  border-color: #e2aa31;
+  border-color: #e68804;
 }
 
 input.modified {
-  background-color: #f9c34e;
-  border-color: #fbc608;
+  background: linear-gradient(13deg, #ff9705, #e8c0ffc5);
 }
 
 button {
   padding: 6px 14px;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 450;
   border: none;
   border-radius: 20px;
   cursor: pointer;
-  background: linear-gradient(13deg, #d587ff, #afefff);
-  color: #333333;
+  background: linear-gradient(13deg, #bc75e2, #92b3ff);
+  color: #2f2f2f;
   transition: all 0.25s ease;
 }
 
 button:hover:not(:disabled) {
   transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 0px 20px rgba(102, 242, 252, 0.4);
+  box-shadow: 0 0px 20px rgba(255, 255, 255, 0.659);
 }
 
 div[style*='margin-top: 15px'] {
@@ -326,10 +350,11 @@ div[style*='margin-top: 15px'] {
 .custom-text {
   font-size: 19px;
   font-weight: 450;
+  color: #2f2f2f;
 }
 
 select.input {
-  color: #333333;
+  color: #2f2f2f;
   width: 100%;
   padding: 4px 8px;
   font-size: 18px;
@@ -342,13 +367,8 @@ select.input {
     background-color 0.2s;
 }
 
-select.input:focus {
-  outline: none;
-  border-color: #e2aa31;
-}
-
-select.input.modified {
-  background-color: #f9c34e;
-  border-color: #fbc608;
+button.highlighted {
+  background: linear-gradient(13deg, #ff9705, #e8c0ffc5);
+  transition: all 0.2s ease;
 }
 </style>

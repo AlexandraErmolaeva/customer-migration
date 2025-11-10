@@ -49,7 +49,7 @@ public class ExceptionMiddleware
     private async Task HandleValidationExceptionAsync(HttpContext context, Exception exception, Guid id)
     {
         context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+        context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
         await context.Response.WriteAsync(new ExceptionDetails()
         {
             Id = id,
