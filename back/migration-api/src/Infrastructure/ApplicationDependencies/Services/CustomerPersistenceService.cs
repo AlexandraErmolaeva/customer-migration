@@ -7,13 +7,13 @@ using Domain.Entities;
 
 namespace Infrastructure.ApplicationDependencies.Services;
 
-public sealed class CustomerBatchProcessor : ICustomerBatchProcessor
+public sealed class CustomerPersistenceService : ICustomerPersistenceService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly ILoggerManager _logger;
 
-    public CustomerBatchProcessor(IUnitOfWork unitOfWork, IMapper mapper, ILoggerManager logger)
+    public CustomerPersistenceService(IUnitOfWork unitOfWork, IMapper mapper, ILoggerManager logger)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
@@ -31,8 +31,8 @@ public sealed class CustomerBatchProcessor : ICustomerBatchProcessor
     {
         token.ThrowIfCancellationRequested();
 
-        var entities = await GetEntityToCreate(batchDtos);
-        if(!entities.Any())
+        var (entitiesToCreate, entitiesToUpdate) = await GetEntitiesToProcess(batchDtos);
+        if (entitiesToCreate.Count + entitiesToUpdate.Count == 0)
         {
             _logger.LogInfo($"Записи из батча в БД уже существуют, их CardCod`ы: {string.Join(", ", batchDtos.Select(dto => dto.CardCode))}.");
             return 0;
@@ -41,27 +41,34 @@ public sealed class CustomerBatchProcessor : ICustomerBatchProcessor
         token.ThrowIfCancellationRequested();
         try
         {
-            // TODO: Cтоит вынести транзакции на уровень выше.
+            // TODO: Вынести транзакцию на уровень выше.
             await _unitOfWork.BeginTransactionAsync();
-            _unitOfWork.Customers.AddRange(entities);
+
+            if (entitiesToCreate.Any())
+                _unitOfWork.Customers.AddRange(entitiesToCreate);
+
+            if (entitiesToUpdate.Any())
+                _unitOfWork.Customers.UpdateRange(entitiesToUpdate);
+
             await _unitOfWork.CommitTransactionAsync();
         }
         catch (Exception ex)
         {
             await _unitOfWork.RollbackTransactionAsync();
-            throw new Exception($"Произошла ошибка при сохранении данных в БД: {ex}.");
+            throw new Exception("Произошла ошибка при сохранении данных в БД.", ex);
         }
 
-        return entities.Count;
+        _logger.LogInfo($"Добавили записей: {entitiesToCreate.Count} | обновили записей: {entitiesToUpdate.Count}");
+        return entitiesToCreate.Count + entitiesToUpdate.Count;
     }
 
     /// <summary>
-    /// Найти записи, CardCode которых еще не сохранен в БД.
+    /// Найти записи, CardCode и PhoneMobile которых еще не сохранен в БД. Формируем записи для сохранения или обновления.
     /// Комбинируем CardCode и PhoneMobile, чтобы найти задублированные записи, тк CardCode не уникален.
     /// </summary>
     /// <param name="batchDtos"></param>
     /// <returns></returns>
-    private async Task<List<CustomerEntity>> GetEntityToCreate(List<CustomerDto> batchDtos)
+    private async Task<(List<CustomerEntity> EntityToCreate, List<CustomerEntity> EntityToUpdate)> GetEntitiesToProcess(List<CustomerDto> batchDtos)
     {
         var dtoCardCodes = batchDtos.Select(dto => dto.CardCode).ToList();
 
@@ -76,6 +83,10 @@ public sealed class CustomerBatchProcessor : ICustomerBatchProcessor
             .Where(dto => !existingPairs.Contains((dto.CardCode, dto.Contacts?.PhoneMobile)))
             .ToList();
 
-        return _mapper.Map<List<CustomerEntity>>(dtoToCreateEntities);
+        var dtoToUpdateEntities = batchDtos
+            .Where(dto => existingPairs.Contains((dto.CardCode, dto.Contacts?.PhoneMobile)))
+            .ToList();
+
+        return (_mapper.Map<List<CustomerEntity>>(dtoToCreateEntities), _mapper.Map<List<CustomerEntity>>(dtoToUpdateEntities));
     }
 }

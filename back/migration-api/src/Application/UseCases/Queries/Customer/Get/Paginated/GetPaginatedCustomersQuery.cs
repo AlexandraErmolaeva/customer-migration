@@ -2,7 +2,7 @@
 using Application.UseCases.Commands.Seeding.Dtos;
 using MediatR;
 
-namespace Application.UseCases.Queries.Customer.Get.All;
+namespace Application.UseCases.Queries.Customer.Get.Paginated;
 
 public record GetPaginatedCustomersQuery : IRequest<PaginatedResult<CustomerDto>>
 {

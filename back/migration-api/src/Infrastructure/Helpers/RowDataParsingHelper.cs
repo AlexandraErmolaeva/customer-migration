@@ -53,6 +53,7 @@ public static class RowDataParsingHelper
 
     /// <summary>
     /// Распарсить дату. Приходит с оффсетом. Учитываем точки в дате.
+    /// По формуле из ексель дата может прийти как 0.12.1996.
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>

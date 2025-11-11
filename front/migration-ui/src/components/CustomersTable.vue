@@ -315,12 +315,13 @@ input {
   font-weight: 470;
 }
 
-input:focus {
+input:focus select:focus {
   outline: none;
   border-color: #e68804;
 }
 
-input.modified {
+input.modified,
+select.modified {
   background: linear-gradient(13deg, #ff9705, #e8c0ffc5);
 }
 

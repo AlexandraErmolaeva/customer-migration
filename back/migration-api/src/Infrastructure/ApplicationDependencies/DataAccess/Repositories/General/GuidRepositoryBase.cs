@@ -24,17 +24,11 @@ internal abstract class GuidRepositoryBase<TEntity> : IGuidRepository<TEntity> w
         _mapper = mapper;
     }
 
-    public virtual void Add(TEntity entity)
-        => _set.Add(entity);
-
     public virtual void AddRange(IEnumerable<TEntity> entities)
         => _set.AddRange(entities);
 
-    public virtual async Task<TEntity> GetById(Guid id, bool readOnly = false)
-        => await (readOnly ? BaseQuery.AsNoTracking() : BaseQuery).FirstOrDefaultAsync(e => e.Id == id);
-
-    public virtual async Task<IEnumerable<TEntity>> GetFilteredList(Expression<Func<TEntity, bool>> filter, bool readOnly = false)
-       => await (readOnly ? BaseQuery.AsNoTracking() : BaseQuery).Where(filter).ToListAsync();
+    public virtual void UpdateRange(IEnumerable<TEntity> entities)
+       => _set.UpdateRange(entities);
 
     /// <summary>
     /// Получить запись с примененными фильтрами и связанными свойствами.

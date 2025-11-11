@@ -4,7 +4,7 @@ using Application.Dependencies.DataAccess;
 using Application.UseCases.Commands.Seeding.Dtos;
 using MediatR;
 
-namespace Application.UseCases.Queries.Customer.Get.All;
+namespace Application.UseCases.Queries.Customer.Get.Paginated;
 
 public class GetPaginatedCustomersQueryHandler : IRequestHandler<GetPaginatedCustomersQuery, PaginatedResult<CustomerDto>>
 {

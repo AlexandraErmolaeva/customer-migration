@@ -9,14 +9,14 @@ namespace Application.UseCases.Commands.Seeding;
 public class StartSeedingCommandHandler : IRequestHandler<StartSeedingCommand, Result<string>>
 {
     private readonly IExcelCustomersReader _reader;
-    private readonly ICustomerBatchProcessor _batchProcesser;
+    private readonly ICustomerPersistenceService _batchProcesser;
     private readonly ILoggerManager _logger;
 
     private const int BATCH_SIZE = 30;
     private const string FILE_NAME = "testCards.xlsx";
     private const string FILE_PATH = "data";
 
-    public StartSeedingCommandHandler(IExcelCustomersReader reader, ICustomerBatchProcessor batchProcesser, ILoggerManager logger)
+    public StartSeedingCommandHandler(IExcelCustomersReader reader, ICustomerPersistenceService batchProcesser, ILoggerManager logger)
     {
         _reader = reader;
         _batchProcesser = batchProcesser;

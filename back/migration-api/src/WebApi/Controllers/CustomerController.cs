@@ -1,7 +1,7 @@
 ﻿using Application.Common.Dto;
 using Application.UseCases.Commands.Seeding.Dtos;
 using Application.UseCases.Commands.Update.Customer;
-using Application.UseCases.Queries.Customer.Get.All;
+using Application.UseCases.Queries.Customer.Get.Paginated;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;

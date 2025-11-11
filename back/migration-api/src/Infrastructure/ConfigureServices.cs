@@ -4,6 +4,9 @@ using Application.Dependencies.Services;
 using Infrastructure.ApplicationDependencies.DataAccess;
 using Infrastructure.ApplicationDependencies.DataAccess.Repositories;
 using Infrastructure.ApplicationDependencies.Services;
+using Infrastructure.HostedServices;
+using Infrastructure.HostedServices.Config;
+using Infrastructure.InternalDependencies.Serializers;
 using Infrastructure.Persistence;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +20,13 @@ public static class ConfigureServices
         services.ConfigureDbContext(configuration, isDevelopment);
         services.AddRepositories();
         services.AddApplicationDependencies();
+
+        services.AddSingleton<IXmlSerealizer, XmlSerializer>();
+
+        services.AddHostedService<XmlSynchronizer>();
+        services.AddHostedService<XmlGenerator>();
+        services.Configure<XmlSynchronizerConfig>(configuration.GetSection(nameof(XmlSynchronizerConfig)));
+        services.Configure<XmlGeneratorConfig>(configuration.GetSection(nameof(XmlGeneratorConfig)));
     }
 
     private static void AddRepositories(this IServiceCollection services)
@@ -30,6 +40,6 @@ public static class ConfigureServices
     private static void AddApplicationDependencies(this IServiceCollection services)
     {
         services.AddSingleton<IExcelCustomersReader, ExcelCustomersReader>();
-        services.AddScoped<ICustomerBatchProcessor, CustomerBatchProcessor>();
+        services.AddScoped<ICustomerPersistenceService, CustomerPersistenceService>();
     }
 }
