@@ -14,6 +14,5 @@ public class ContactsDto : IMapFrom<ContactsEntity>
     {
         profile.CreateMap<ContactsEntity, ContactsDto>();
         profile.CreateMap<ContactsDto, ContactsEntity>();
-
     }
 }

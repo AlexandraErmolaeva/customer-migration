@@ -22,10 +22,12 @@ public class CustomerDto : IMapFrom<CustomerEntity>
     {
         profile.CreateMap<CustomerEntity, CustomerDto>()
             .ForMember(dest => dest.Contacts, opt => opt.MapFrom(src => src.Contacts != null ? src.Contacts : null))
-            .ForMember(dest => dest.FinancialProfile, opt => opt.MapFrom(src => src.FinancialProfile != null ? src.FinancialProfile : null));
+            .ForMember(dest => dest.FinancialProfile, opt => opt.MapFrom(src => src.FinancialProfile != null ? src.FinancialProfile : null))
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
 
         profile.CreateMap<CustomerDto, CustomerEntity>()
             .ForMember(dest => dest.Contacts, opt => opt.MapFrom(src => src.Contacts != null ? src.Contacts : null))
-            .ForMember(dest => dest.FinancialProfile, opt => opt.MapFrom(src => src.FinancialProfile != null ? src.FinancialProfile : null));
+            .ForMember(dest => dest.FinancialProfile, opt => opt.MapFrom(src => src.FinancialProfile != null ? src.FinancialProfile : null))
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
     }
 }

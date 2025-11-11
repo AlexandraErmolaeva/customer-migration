@@ -30,6 +30,9 @@ internal abstract class GuidRepositoryBase<TEntity> : IGuidRepository<TEntity> w
     public virtual void UpdateRange(IEnumerable<TEntity> entities)
        => _set.UpdateRange(entities);
 
+    public virtual void AttachRange(IEnumerable<TEntity> entities)
+       => _set.AttachRange(entities);
+
     /// <summary>
     /// Получить запись с примененными фильтрами и связанными свойствами.
     /// </summary>
@@ -62,5 +65,21 @@ internal abstract class GuidRepositoryBase<TEntity> : IGuidRepository<TEntity> w
             query = query.Where(filter);
 
         return await query.ProjectTo<TDto>(_mapper.ConfigurationProvider).ToListAsync();
+    }
+
+    public virtual async Task<List<TEntity>> GetFilteredListWithIncludes(Expression<Func<TEntity, bool>> filter, bool readOnly = false, params Expression<Func<TEntity, object>>[] includes)
+    {
+        var query = readOnly ? BaseQuery.AsNoTracking() : BaseQuery;
+
+        if (includes is not null && includes.Any())
+        {
+            foreach (var include in includes)
+                query = query.Include(include);
+        }
+
+        if (filter is not null)
+            query = query.Where(filter);
+
+        return await query.ToListAsync();
     }
 }

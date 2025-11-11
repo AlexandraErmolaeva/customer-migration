@@ -3,6 +3,7 @@ using Application.Dependencies.Logging;
 using Application.Dependencies.Services;
 using Application.UseCases.Commands.Seeding.Dtos;
 using AutoMapper;
+using Azure.Core;
 using Domain.Entities;
 
 namespace Infrastructure.ApplicationDependencies.Services;
@@ -41,7 +42,6 @@ public sealed class CustomerPersistenceService : ICustomerPersistenceService
         token.ThrowIfCancellationRequested();
         try
         {
-            // TODO: Вынести транзакцию на уровень выше.
             await _unitOfWork.BeginTransactionAsync();
 
             if (entitiesToCreate.Any())
@@ -71,22 +71,21 @@ public sealed class CustomerPersistenceService : ICustomerPersistenceService
     private async Task<(List<CustomerEntity> EntityToCreate, List<CustomerEntity> EntityToUpdate)> GetEntitiesToProcess(List<CustomerDto> batchDtos)
     {
         var dtoCardCodes = batchDtos.Select(dto => dto.CardCode).ToList();
+        var dtoPhone = batchDtos.Select(dto => dto.Contacts.PhoneMobile).ToList();
 
-        var existingByCardCodeDtos = await _unitOfWork.Customers
-            .GetProjectedListAsync<CustomerDto>(e => dtoCardCodes.Contains(e.CardCode));
+        var existingEntity = await _unitOfWork.Customers.GetFilteredListWithIncludes(e =>
+            dtoCardCodes.Contains(e.CardCode) && dtoPhone.Contains(e.Contacts.PhoneMobile),
+            readOnly: false,
+            includes: [entity => entity.Contacts, entity => entity.FinancialProfile]);
 
-        var existingPairs = existingByCardCodeDtos
-            .Select(c => (c.CardCode, c.Contacts?.PhoneMobile))
+        var existingPairs = existingEntity
+            .Select(c => (c.CardCode, c.Contacts.PhoneMobile))
             .ToHashSet();
 
         var dtoToCreateEntities = batchDtos
             .Where(dto => !existingPairs.Contains((dto.CardCode, dto.Contacts?.PhoneMobile)))
             .ToList();
 
-        var dtoToUpdateEntities = batchDtos
-            .Where(dto => existingPairs.Contains((dto.CardCode, dto.Contacts?.PhoneMobile)))
-            .ToList();
-
-        return (_mapper.Map<List<CustomerEntity>>(dtoToCreateEntities), _mapper.Map<List<CustomerEntity>>(dtoToUpdateEntities));
+        return (_mapper.Map<List<CustomerEntity>>(dtoToCreateEntities), existingEntity);
     }
 }
